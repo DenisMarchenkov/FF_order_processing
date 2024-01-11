@@ -7,6 +7,7 @@ def get_settings():
         cur_dir = Path.cwd()
         download_dir = Path(cur_dir, 'Download')
         completed_dir = Path(download_dir, 'Completed')
+        recap_dir = Path(cur_dir, 'Recap')
         server_imap = dt[0].split('= ')[1]
         port_imap = dt[1].split('= ')[1]
         server_smtp = dt[2].split('= ')[1]
@@ -18,6 +19,7 @@ def get_settings():
             "cur_dir": cur_dir,
             "download_dir": download_dir,
             "completed_dir": completed_dir,
+            "recap_dir": recap_dir,
             "server_imap": server_imap,
             "port_imap": port_imap,
             "server_smtp": server_smtp,
@@ -84,7 +86,6 @@ def sheet_format(sheet, last_empty_row, last_empty_columns, column_date, recap, 
     from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
     from openpyxl.worksheet.page import PageMargins
     from openpyxl.styles.numbers import BUILTIN_FORMATS
-
 
     thin_border = Border(
         left=Side(border_style='thin', color='FF000000'),
@@ -190,7 +191,7 @@ def sheets_orders_formatting(sheet, last_empty_row, last_empty_columns, column_d
     sheet.cell(3, 3).value = "СУММА ЗАКАЗА"
     sheet.cell(4, 3).value = "СТРОК В ЗАКАЗЕ"
     sheet.cell(5, 3).value = "ШТУК В ЗАКАЗЕ"
-    sheet.cell(1, 6).value = int(sheet.cell(8, 1).value)
+    sheet.cell(1, 6).value = sheet.cell(8, 1).value
     sheet.cell(2, 6).value = sheet.cell(8, 2).value
     sheet.cell(2, 6).number_format = 'DD.MM.YYYY'
     sheet.cell(3, 6).value = sheet.cell(8, 11).value
