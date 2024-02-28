@@ -5,7 +5,7 @@ def get_settings():
 
         from pathlib import Path
         cur_dir = Path.cwd()
-        download_dir = Path(cur_dir, 'Download')
+        download_dir = Path(cur_dir, 'Download', 'Distrifarm')
         completed_dir = Path(download_dir, 'Completed')
         recap_dir = Path(cur_dir, 'Recap')
         server_imap = dt[0].split('= ')[1]
@@ -26,11 +26,12 @@ def get_settings():
             "port_smtp": port_smtp,
             "login": login,
             "password_api": password_api,
+            "download_dir_for_file_FF": Path(cur_dir, 'Download', 'Frenchpharmacy')
         }
         return settings
 
 
-def save_attachment_all_email(server, login, passw, save_path):
+def save_attachment_all_email(server, login, passw, save_path, save_path_for_file_FF):
     import imaplib
     import email
     import os
@@ -59,8 +60,14 @@ def save_attachment_all_email(server, login, passw, save_path):
                 filename = str(email.header.make_header(email.header.decode_header(filename)))
                 file_extension = filename.split('.')[1]
                 if file_extension == 'xls':
-                    print("нашли вложение ", filename)
+                    # print("нашли вложение с файлом Дистрифарм ", filename)
                     fp = open(os.path.join(save_path, filename), 'wb')
+                    fp.write(part.get_payload(decode=1))
+                    fp.close
+                    print(f'файл {filename} сохранен')
+                elif file_extension == 'csv':
+                    # print("нашли вложение с файлом Френчфармаси", filename)
+                    fp = open(os.path.join(save_path_for_file_FF, filename), 'wb')
                     fp.write(part.get_payload(decode=1))
                     fp.close
                     print(f'файл {filename} сохранен')
@@ -79,6 +86,15 @@ def get_dataframe(path):
     dataframe = read_excel(path, header=None, na_values='не указан')
     dataframe = dataframe[1:]
     dataframe = dataframe.fillna('нет данных')
+    return dataframe
+
+
+def get_dataframe_csv(path):
+    from  pandas import read_csv
+    dataframe = read_csv(path, sep=None, engine="python", usecols=[2, 3, 4, 5], header=None)
+    # dataframe.columns.name = None
+    # dataframe.index.name = None
+    #print(dataframe)
     return dataframe
 
 
